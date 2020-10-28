@@ -30,6 +30,11 @@ public class PositionComponent implements Pool.Poolable , Component {
         this.y = y;
     }
 
+    public void setPosition(float x , float y){
+        this.x = x ;
+        this.y = y;
+    }
+
     //== public methods ==
     @Override
     public void reset() {
