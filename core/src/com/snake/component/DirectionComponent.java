@@ -33,6 +33,10 @@ public class DirectionComponent implements Component , Pool.Poolable {
         this.direction = direction;
     }
 
+    public static Direction getDefaultDirection(){
+        return Direction.RIGHT;
+    }
+
     @Override
     public void reset() {
         direction = Direction.RIGHT;

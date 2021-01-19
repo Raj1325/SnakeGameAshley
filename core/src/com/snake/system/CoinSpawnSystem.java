@@ -1,5 +1,6 @@
 package com.snake.system;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
@@ -26,6 +27,13 @@ public class CoinSpawnSystem extends IteratingSystem {
     public CoinSpawnSystem(){
         super(FAMILY);
     }
+    private SoundSystem soundSystem;
+
+    @Override
+    public void addedToEngine(Engine engine) {
+        super.addedToEngine(engine);
+        soundSystem = engine.getSystem(SoundSystem.class);
+    }
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
@@ -34,6 +42,7 @@ public class CoinSpawnSystem extends IteratingSystem {
 
         if(coinComponent.available){return;}
 
+        soundSystem.playCoinSpawn();
         float coinX = (int) MathUtils.random(GameConfig.WORLD_WIDTH - GameConfig.COIN_SIZE);
         float coinY = (int)MathUtils.random(GameConfig.WORLD_HEIGHT - GameConfig.GAME_Y_OFFSET - GameConfig.COIN_SIZE);
         coinComponent.available = true;

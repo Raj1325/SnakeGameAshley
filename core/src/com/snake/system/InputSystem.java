@@ -3,13 +3,10 @@ package com.snake.system;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IntervalIteratingSystem;
-import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.snake.common.GameMapper;
 import com.snake.component.DirectionComponent;
+import com.snake.component.InputComponent;
 import com.snake.component.PlayerComponent;
-import com.snake.component.PositionComponent;
 import com.snake.config.GameConfig;
 import com.snake.entity.Direction;
 
@@ -18,38 +15,41 @@ import com.snake.entity.Direction;
  **/
 
 
-public class InputSystem extends IteratingSystem {
+public class InputSystem extends IntervalIteratingSystem {
 
     private static final Family FAMILY = Family.all(
             PlayerComponent.class,
-            DirectionComponent.class
+            DirectionComponent.class,
+            InputComponent.class
     ).get();
 
     public InputSystem(){
-        super(FAMILY);
+        super(FAMILY , GameConfig.SNAKE_TIMER);
     }
 
     @Override
-    protected void processEntity(Entity entity , float deltaTime) {
-        DirectionComponent directionComponent = GameMapper.DIRECTION.get(entity);
+    protected void processEntity(Entity entity) {
 
-        boolean leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        boolean rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-        boolean upPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
-        boolean downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
+        DirectionComponent directionComponent = GameMapper.DIRECTION.get(entity);
+        InputComponent inputComponent = GameMapper.INPUT_QUEUE.get(entity);
+
+        Direction direction = directionComponent.direction;
+        if(inputComponent.inputQueue.size > 0){
+            direction = inputComponent.inputQueue.removeIndex(0);
+        }
 
         if(directionComponent.isUp() || directionComponent.isDown()){
-            if(leftPressed){
+            if(direction.isLeft()){
                 directionComponent.setDirection(Direction.LEFT);
             }
-            else if(rightPressed){
+            else if(direction.isRight()){
                 directionComponent.setDirection(Direction.RIGHT);
             }
         }else if(directionComponent.isRight() || directionComponent.isLeft()){
-            if(upPressed){
+            if(direction.isUp()){
                 directionComponent.setDirection(Direction.UP);
             }
-            else if(downPressed){
+            else if(direction.isDown()){
                 directionComponent.setDirection(Direction.DOWN);
             }
         }
